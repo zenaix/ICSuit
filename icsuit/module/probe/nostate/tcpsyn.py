@@ -32,7 +32,7 @@ class TCPSYNSender(Sender):
         Sender.__init__(self, lock, name, seed, rate, timeout, probe, target)
 
     def send(self, ip, port):
-        return self.sock.sendto(build_probe(ip, port), (ip, port))
+        return self.sock.sendto(build_probe(ip, port)[0], (ip, port))
 
     def postsend(self, status):
         mask = ipmask(iprange(self.target[0])[1])
@@ -97,7 +97,15 @@ class TCPSYNRecver(Recver):
             path = os.path.join('/tmp', self.output_file)
             with open(path, 'a') as f:
                 device = self.devices[-1]
-                f.write("Host: %s\n\n" % device[0])
+                f.write("Host: %s\n" % device[0])
+                f.write("="*65+"\n\n")
+                probe, ip, tcp = build_probe(device[0], device[1])
+                f.write("Send:\n")
+                f.write("-----\n")
+                print_ip(ip.unheader, out=f)
+                print_tcp(tcp.unheader, out=f)
+                f.write("Recv:\n")
+                f.write("-----\n")
                 print_ip(device[2], out=f)
                 print_tcp(device[3], out=f)
 
@@ -113,6 +121,10 @@ class TCPSYNRecver(Recver):
             port.append(str(device[1]))
             status.append("open")
         column_print(HOST_IP=ip, PORT=port, STATUS=status)
+
+        with open('/tmp/data', 'w') as f:
+            for device in self.devices:
+                f.write("%s/%d\n" % (device[0], device[1]))
         
         return status
 
@@ -128,7 +140,7 @@ def build_probe(ip, port):
     ip = IP.IP(src=src_ip, dst=dst_ip, protocol="tcp")
     tcp = TCP.TCP(IP=ip, dst_port=dst_port, flag_syn=1)
 
-    return tcp.segment
+    return (tcp.segment, ip, tcp)
     
 def parse_option(lock, option):
     # 选项解析

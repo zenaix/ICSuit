@@ -1,7 +1,7 @@
 # -*- coding:utf-8 -*-
 
 from icsuit.cli import CLI
-from icsuit.core.nostate import scan
+from icsuit.core import nostate, connect
 
 class ICSCLI(CLI):
     def __init__(self):
@@ -11,7 +11,11 @@ class ICSCLI(CLI):
         """Usage:
         run, run the selected module.
         """
-        scan(self._module_path, self._option)
+        path = self._module_path.split('/')
+        if path[-2] == "nostate":
+            nostate.scan(self._module_path, self._option)
+        else:
+            connect.scan(self._module_path, self._option)
     
     def do_db_status(self, line):
         """Usage:
