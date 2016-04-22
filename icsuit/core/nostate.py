@@ -125,8 +125,8 @@ class Sender(threading.Thread):
         pass
 
     def bar(self, total):
-        if total > 5*self.rate:
-            if ((self.count % (total/50 + 1)) == 0) or self.count % self.rate == 0 or self.count == total:
+        if total > 10000 or total > 5*self.rate:
+            if ((self.count % (total/1000 + 1)) == 0) or self.count % self.rate == 0 or self.count == total:
                 percent = int(100*self.count/total)
                 timecost = time.time()-self.begin
                 sys.stdout.write("Processing %d%%[%s], Packts: %s, Rate: %dp/s, Rest time: %s        \r" % (percent, int(percent*0.8)*"#", self.count, round(float(self.count)/(timecost)), timeformat(int((total-self.count)*timecost/self.count))))

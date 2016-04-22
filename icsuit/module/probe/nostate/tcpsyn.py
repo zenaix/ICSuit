@@ -162,16 +162,28 @@ def parse_option(lock, option):
             unit = option["BANDWIDTH"][-1]
             if unit == "P":
                 rate = int(option["BANDWIDTH"][:-1])
-                args["rate"] = rate
+                if rate > 11100:
+                    args["rate"] = 40000
+                else:
+                    args["rate"] = rate
             elif unit == "K":
                 rate = int(int(option["BANDWIDTH"][:-1])*1000/probe_len)
-                args["rate"] = rate
+                if rate > 11100:
+                    args["rate"] = 40000
+                else:
+                    args["rate"] = rate
             elif unit == "M":
                 rate = int(int(option["BANDWIDTH"][:-1])*1000000/probe_len)
-                args["rate"] = rate
+                if rate > 11100:
+                    args["rate"] = 40000
+                else:
+                    args["rate"] = rate
             else:
                 rate = int(option["BANDWIDTH"]) 
-                args["rate"] = rate 
+                if rate > 11100:
+                    args["rate"] = 40000
+                else:
+                    args["rate"] = rate 
         except ValueError:
             print "Option 'BANDWIDTH' illegal, use the default setting."
 
