@@ -146,7 +146,7 @@ def parse_option(lock, option):
     # 选项解析
     args = {}
     args["target"] = (option["TARGET_IP"], int(option["TARGET_PORT"]))
-    if option["OUTPUT_FILE"] != "":
+    if option["OUTPUT_FILE"] != "None":
         args["output_file"] = option["OUTPUT_FILE"]
 
     recver = TCPSYNRecver(lock, "TCPSYNRecver", **args)
